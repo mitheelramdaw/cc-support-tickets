@@ -241,16 +241,3 @@ else:
             .properties(title="Ticket Status Distribution")
         )
         st.altair_chart(status_plot, use_container_width=True)
-
-        # Pie chart for priority distribution
-        priority_plot = (
-            alt.Chart(df)
-            .mark_arc()
-            .encode(
-                theta=alt.Theta(field="count():Q", type="quantitative"),
-                color="Priority:N",
-                tooltip=["Priority:N", "count():Q"],
-            )
-            .properties(title="Ticket Priority Distribution")
-        )
-        st.altair_chart(priority_plot, use_container_width=True)
