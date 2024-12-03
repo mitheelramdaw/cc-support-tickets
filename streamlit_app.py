@@ -12,9 +12,9 @@ import os
 
 # GitHub OAuth2 credentials
 CLIENT_ID = "Ov23licxgATj9XyJQjLx"  # Replace with your GitHub Client ID
-CLIENT_SECRET = "319dbe8ad6aec2c1ba9788f67debb9babce5ed41"  # Replace with your GitHub Client Secret
+CLIENT_SECRET = "0ae2cd75028e1fe72d683a66b26bb682a7969526"  # Replace with your GitHub Client Secret
 GITHUB_API_URL = "https://api.github.com/user"
-REDIRECT_URI = "https://cheat-codes-support-tickets.streamlit.app/callback"  # Corrected Redirect URI
+REDIRECT_URI = "https://cheat-codes-support-tickets.streamlit.app/"  # Corrected Redirect URI
 
 
 # GitHub OAuth2 client setup
