@@ -1,19 +1,24 @@
 import sqlite3
 
-def create_db():
+# Create the tickets.db SQLite database and the tickets table
+def create_tickets_db():
     conn = sqlite3.connect("tickets.db")
     cursor = conn.cursor()
+
+    # Create the tickets table if it doesn't exist
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS tickets (
         ID TEXT PRIMARY KEY,
-        Issue TEXT,
-        Status TEXT,
-        Priority TEXT,
-        DateSubmitted TEXT
+        Issue TEXT NOT NULL,
+        Status TEXT NOT NULL,
+        Priority TEXT NOT NULL,
+        DateSubmitted TEXT NOT NULL
     )
     ''')
+
     conn.commit()
     conn.close()
+    print("Database and table created successfully.")
 
-# Call this function to ensure the DB exists before app starts
-create_db()
+# Run the function to create the database and table
+create_tickets_db()

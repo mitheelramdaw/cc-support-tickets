@@ -54,19 +54,30 @@ def update_ticket(ticket_id, status, priority, issue_description):
     conn.commit()
     conn.close()
 
+# Function to delete a ticket from the database
+def delete_ticket(ticket_id):
+    conn = sqlite3.connect("tickets.db")
+    cursor = conn.cursor()
+    cursor.execute('''
+    DELETE FROM tickets WHERE ID = ?
+    ''', (ticket_id,))
+    conn.commit()
+    conn.close()
+
 # Initialize Streamlit app
 st.set_page_config(page_title="Support Tickets", page_icon="🎫")
 st.title("🎫 Support Tickets")
 st.write(
     """
     This app allows you to create, view, and manage support tickets. All data is stored in SQLite3.
+    You can create a ticket, update the ticket status, and view the statistics.
     """
 )
 
 # Add a new ticket form
 st.header("Add a New Ticket")
 with st.form("add_ticket_form"):
-    issue_description = st.text_area("Issue Description", "")
+    issue_description = st.text_input("Issue Description", "")
     priority = st.selectbox("Priority", ["High", "Medium", "Low"])
     submitted = st.form_submit_button("Submit")
 
@@ -75,7 +86,7 @@ with st.form("add_ticket_form"):
         st.success("Ticket submitted successfully!")
         st.session_state.refresh_tickets = True  # Flag to refresh tickets
 
-# Fetch tickets on refresh
+# Fetch all tickets
 if "refresh_tickets" not in st.session_state:
     st.session_state.refresh_tickets = True
 
@@ -86,16 +97,18 @@ if st.session_state.refresh_tickets:
     )
     st.session_state.refresh_tickets = False
 
-# Display Existing Tickets
+# Display Existing Tickets Section
 st.header("Existing Tickets")
 if not st.session_state.tickets_df.empty:
+    st.write("### View All Tickets")
     st.dataframe(st.session_state.tickets_df, use_container_width=True)
 else:
     st.write("No tickets created yet.")
 
-# Manage Tickets
+# Display Control Center Section
 st.header("Control Center")
 if not st.session_state.tickets_df.empty:
+    st.write("### Manage Tickets")
     editable_df = st.data_editor(
         st.session_state.tickets_df,
         use_container_width=True,
@@ -127,16 +140,28 @@ if not st.session_state.tickets_df.empty:
 else:
     st.write("No tickets available to manage.")
 
-# Ticket Statistics
+# Display Ticket Statistics
 st.header("Ticket Statistics")
-num_open = len(st.session_state.tickets_df[st.session_state.tickets_df["Status"] == "Open"])
-num_in_progress = len(st.session_state.tickets_df[st.session_state.tickets_df["Status"] == "In Progress"])
-num_closed = len(st.session_state.tickets_df[st.session_state.tickets_df["Status"] == "Closed"])
+num_open_tickets = len(
+    st.session_state.tickets_df[
+        st.session_state.tickets_df["Status"] == "Open"
+    ]
+)
+num_in_progress = len(
+    st.session_state.tickets_df[
+        st.session_state.tickets_df["Status"] == "In Progress"
+    ]
+)
+num_closed_tickets = len(
+    st.session_state.tickets_df[
+        st.session_state.tickets_df["Status"] == "Closed"
+    ]
+)
 
 col1, col2, col3 = st.columns(3)
-col1.metric("Open Tickets", num_open)
-col2.metric("In Progress", num_in_progress)
-col3.metric("Closed Tickets", num_closed)
+col1.metric(label="Open Tickets", value=num_open_tickets)
+col2.metric(label="In Progress", value=num_in_progress)
+col3.metric(label="Closed Tickets", value=num_closed_tickets)
 
 # Charts Section
 st.write("### Ticket Status Distribution")
